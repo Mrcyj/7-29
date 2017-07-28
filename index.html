@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="./js/vue.js"></script>
+		<script src="./js/vue-router.min.js"></script>
+		<link rel="stylesheet" href="./css/bootstrap.min.css" />
+	</head>
+
+	<body>
+		<div id="app">
+			<!--<v-show></v-show>
+			<v-add></v-add>
+			<v-run></v-run>
+			<v-rel></v-rel>-->
+			<router-link to="/show">show</router-link>
+			<router-link to="/add">add</router-link>
+			<router-link to="/run">run</router-link>
+			<router-link to="/rel">rel</router-link>
+			<div>
+				<router-view></router-view>
+			</div>
+		</div>
+		<template id="show">
+			<div class="show">
+				<button @click="ifShow=!ifShow" class="btn btn-success">if-显示/隐藏{{ifShow}}</button>
+				<div class="box" v-if="ifShow">
+					我是div if
+				</div>
+				<button @click="show=!show" class="btn btn-success">show-显示/隐藏{{show}}</button>
+				<div class="box" v-show="show">
+					我是div show
+				</div>
+			</div>
+		</template>
+		<template id="add">
+			<div class="show">
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Tolist ({{total}})</h3>
+					</div>
+					<div class="panel-body">
+						<ul class="list-group">
+							<li :class="{done:item.completed}" v-for="(item,index) in todos" class="list-group-item">{{item.title}} {{item.completed}}
+								<button :class="item.completed?'btn-success':'btn-danger'" @click="toggle(index)" class="btn pull-right btn-xs">{{item.completed?'已完成':'完成'}}
+						</button>
+								<button class="btn btn-info btn-xs pull-right" @click="del(index)">
+							删除
+						</button>
+							</li>
+						</ul>
+						<input type="text" class="form-control" v-model="newData.title" />
+						<button class="btn btn-success" @click="addNews(newData)">add</button>
+					</div>
+					<div class="panel-footer"></div>
+
+				</div>
+		</template>
+		<template id="run">
+			<div class="show">
+				<!--数据的显示 表达式和v-text指令-->
+			{{message}}
+			<span v-text="info"></span>
+			<!--双向数据绑定 v-model-->
+			<input type="text" v-model="message" />
+
+			<hr />
+			<!--循环数组显示数据-->
+			<ul>
+				<li v-for="(v,index) in lists">{{index}}---{{v.id}}---{{v.title}}=={{v.ob}}</li>
+			</ul>
+			<!--触发事件-->
+			<button v-on:click="go()">点击</button>
+			<button @click="run()">重击</button>
+			</div>
+		</template>
+		<template id="rel">
+			<div class="show">
+				<button>删除</button>
+				<div>我是div</div>
+			</div>
+		</template>
+	</body>
+	<script>
+		//全局定义组件
+		//		Vue.component("v-show",{template:"#show"});
+		//		Vue.component("v-add",{template:"#add"})
+		//		Vue.component("v-run",{template:"#run"})
+		//		Vue.component("v-rel",{template:"#rel"})
+
+		var show = Vue.extend({
+			template: "#show",
+			data(){
+				return{
+					ifShow: true,
+					show: true
+				}
+			}
+		});
+		var add = Vue.extend({
+			template: "#add",
+			data() {
+				return {
+					newData: {
+						id: null,
+						title: '',
+						completed: false
+					},
+					todos: [{
+							id: 1,
+							title: '吃饭',
+							completed: false
+						},
+						{
+							id: 2,
+							title: '睡觉',
+							completed: false
+						},
+						{
+							id: 3,
+							title: '做梦',
+							completed: false
+						},
+						{
+							id: 4,
+							title: '钱好多',
+							completed: false
+						},
+						{
+							id: 4,
+							title: '想多了',
+							completed: false
+						}
+					]
+				}
+			},
+			methods: {
+				addNews(data) {
+					this.todos.push(data);
+					this.newData = {
+						id: null,
+						title: ''
+					}
+				},
+				toggle(index) {
+					this.todos[index].completed = !this.todos[index].completed;
+					console.log("haha")
+				},
+				del(index) {
+					this.todos.splice(index, 1)
+				}
+			},
+			computed: {
+				total() {
+					return this.todos.length;
+				}
+			}
+
+		});
+		var run = Vue.extend({
+			template: "#run",
+			data() {
+				return {
+					//数据
+				message: '等会去不去跑步呢?',
+				info: '我是vue',
+				lists: [{
+						id: 1,
+						title: '去跑步',
+						ob:'做喜欢的事'
+					},
+					{
+						id: 2,
+						title: '去健身',
+						ob:'做喜欢的事'
+					},
+					{
+						id: 3,
+						title: '去运动',
+						ob:'做喜欢的事'
+					},
+					{
+						id: 4,
+						title: '去快跑',
+						ob:'做喜欢的事'
+					},
+					{
+						id: 5,
+						title: '去俯卧撑',
+						ob:'做喜欢的事'
+					}
+				]
+				}
+			},
+			methods: {
+				go() {
+					console.log(" go go go")
+				},
+				run() {
+					console.log("run run run")
+				}
+			}
+		});
+		var rel = Vue.extend({
+			template: "#rel"
+		});
+
+		var router = new VueRouter({
+			routes: [{
+					path: "/show",
+					component: show
+				},
+				{
+					path: "/add",
+					component: add
+				},
+				{
+					path: "/run",
+					component: run
+				},
+				{
+					path: "/rel",
+					component: rel
+				}
+			]
+		})
+		new Vue({
+			el: "#app",
+			router: router
+
+		})
+		//局部定义组件
+		//		new Vue({
+		//			el:"#app",
+		//			components:{
+		//				"v-show":{template:"#show"}
+		//			}
+		//		})
+	</script>
+
+</html>
